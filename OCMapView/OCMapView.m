@@ -84,25 +84,41 @@
 #pragma mark - MKMapView
 
 - (void)addAnnotation:(id < MKAnnotation >)annotation {
-    [_allAnnotations addObject:annotation];
-    [self doClustering];
+    if (self.clusteringEnabled) {
+        [_allAnnotations addObject:annotation];
+        [self doClustering];
+    } else {
+        [super addAnnotation:annotation];
+    }
 }
 
 - (void)addAnnotations:(NSArray *)annotations {
-    [_allAnnotations addObjectsFromArray:annotations];
-    [self doClustering];
+    if (self.clusteringEnabled) {
+        [_allAnnotations addObjectsFromArray:annotations];
+        [self doClustering];
+    } else {
+        [super addAnnotations:annotations];
+    }
 }
 
 - (void)removeAnnotation:(id < MKAnnotation >)annotation {
-    [_allAnnotations removeObject:annotation];
-    [self doClustering];
+    if (self.clusteringEnabled) {
+        [_allAnnotations removeObject:annotation];
+        [self doClustering];
+    } else {
+        [super removeAnnotation:annotation];
+    }
 }
 
 - (void)removeAnnotations:(NSArray *)annotations{
-    for (id<MKAnnotation> annotation in annotations) {
-        [_allAnnotations removeObject:annotation];
+    if (self.clusteringEnabled) {
+        for (id<MKAnnotation> annotation in annotations) {
+            [_allAnnotations removeObject:annotation];
+        }
+        [self doClustering];
+    } else {
+        [super removeAnnotations:annotations];
     }
-    [self doClustering];
 }
 
 #pragma mark - Properties
@@ -130,7 +146,9 @@
         if (![[change objectForKey:NSKeyValueChangeNewKey]
               isEqual:[change objectForKey:NSKeyValueChangeOldKey]])
         {
-            [self doClustering];
+            if (self.clusteringEnabled) {
+                [self doClustering];
+            }
         }
     }
 }
